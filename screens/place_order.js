@@ -330,15 +330,7 @@ export default class PlaceOrder extends Component {
     componentDidMount() {
         this.requestLocationPermission();
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => { alert("value:" + position) },
-            (error) => { console.log(error) },
-            {
-                enableHighAccuracy: true,
-                timeout: 20000,
-                maximumAge: 10000
-            }
-        )
+
         // Instead of navigator.geolocation, just use Geolocation.
         var service_id = this.props.navigation.getParam('service_id');
         this.setState(
