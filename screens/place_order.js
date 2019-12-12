@@ -137,7 +137,7 @@ export default class PlaceOrder extends Component {
                 // requestLocationPermission();
                 this.setState({ mapReady: true, loading: false });
             },
-            { enableHighAccuracy: false, timeout: 5000, maximumAge: 5000 }
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
 
         // var userLat = this.state.userLat;
@@ -373,7 +373,7 @@ export default class PlaceOrder extends Component {
                 // requestLocationPermission();
                 this.setState({ mapReady: true });
             },
-            { enableHighAccuracy: false, timeout: 5000, maximumAge: 5000 }
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
 
 

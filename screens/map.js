@@ -107,7 +107,7 @@ export default class Map extends Component {
                 console.log(error.code, error.message);
                 // requestLocationPermission();
             },
-            { enableHighAccuracy: false, timeout: 5000, maximumAge: 5000 }
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
 
 
