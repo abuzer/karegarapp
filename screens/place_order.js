@@ -329,54 +329,51 @@ export default class PlaceOrder extends Component {
     }
     componentDidMount() {
         this.requestLocationPermission();
-
-
-        // Instead of navigator.geolocation, just use Geolocation.
         var service_id = this.props.navigation.getParam('service_id');
         this.setState(
             {
                 service_id: service_id
             })
-        Geolocation.getCurrentPosition(
-            (position) => {
-                console.log('postion got')
-                console.log(position.coords);
-                this.setState({
-                    lat: position.coords.latitude,
-                    long: position.coords.longitude,
-                    userLat: position.coords.latitude,
-                    userLong: position.coords.longitude,
-                    // mapReady: true,
+        // this.watchID = Geolocation.watchPosition((position) => {
+        //     console.log("got postion")
 
-                });
-                var NY = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                }
-                Geocoder.geocodePosition(NY).then(res => {
-                    // res is an Array of geocoding object (see below)
-                    // //console.log(res)
-                    let address = res[0];
-                    // if (address) {
-                    this.setState({ address: address.formattedAddress, mapReady: true })
-                    // }
-                    // //console.log(address.formattedAddress)
-                }).catch(err => {
-                    //console.log(err)
-                    this.setState({ mapReady: true })
-                });
-            },
-            (error) => {
-                console.log('postion error')
-                // See error code charts below.
-                console.log(error.code, error.message);
-                // requestLocationPermission();
-                this.setState({ mapReady: true });
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
+        //     this.setState({
+        //         lat: position.coords.latitude,
+        //         long: position.coords.longitude,
+        //         userLat: position.coords.latitude,
+        //         userLong: position.coords.longitude,
+        //         // mapReady: true,
+
+        //     });
+        //     // Create the object to update this.state.mapRegion through the onRegionChange function
+        //     let region = {
+        //         lat: position.coords.latitude,
+        //         lng: position.coords.longitude,
+
+        //     }
+        //     Geocoder.geocodePosition(region).then(res => {
+        //         // res is an Array of geocoding object (see below)
+        //         // //console.log(res)
+        //         let address = res[0];
+        //         // if (address) {
+        //         this.setState({ address: address.formattedAddress, mapReady: true })
+        //         // }
+        //         // //console.log(address.formattedAddress)
+        //     }).catch(err => {
+        //         console.log(err)
+        //         this.setState({ mapReady: true })
+        //     });
+
+        // }, (error) => console.log(error));
+        // return;
+        // Instead of navigator.geolocation, just use Geolocation.
 
 
+
+
+    }
+    componentWillUnmount() {
+        // Geolocation.clearWatch(this.watchID);
     }
     async requestLocationPermission() {
         const chckLocationPermission = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -393,7 +390,46 @@ export default class PlaceOrder extends Component {
                 )
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     //console.log("You've access for the location");
+                    Geolocation.getCurrentPosition(
+                        (position) => {
+                            console.log('postion got')
+                            console.log(position.coords);
+                            this.setState({
+                                lat: position.coords.latitude,
+                                long: position.coords.longitude,
+                                userLat: position.coords.latitude,
+                                userLong: position.coords.longitude,
+                                // mapReady: true,
+
+                            });
+                            var NY = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            }
+                            Geocoder.geocodePosition(NY).then(res => {
+                                // res is an Array of geocoding object (see below)
+                                // //console.log(res)
+                                let address = res[0];
+                                // if (address) {
+                                this.setState({ address: address.formattedAddress, mapReady: true })
+                                // }
+                                // //console.log(address.formattedAddress)
+                            }).catch(err => {
+                                //console.log(err)
+                                this.setState({ mapReady: true })
+                            });
+                        },
+                        (error) => {
+                            console.log('postion error')
+                            // See error code charts below.
+                            console.log(error.code, error.message);
+                            // requestLocationPermission();
+                            this.setState({ mapReady: true });
+                        },
+                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 5000 }
+                    );
                 } else {
+                    ToastAndroid.show("Please enable location access", ToastAndroid.SHORT);
                     //console.log("You don't have access for the location");
                 }
             } catch (err) {
@@ -403,7 +439,7 @@ export default class PlaceOrder extends Component {
     };
     render() {
 
-        if (this.state.loading) {
+        if (this.state.loading || !this.state.mapReady) {
             return (
                 <View style={styles.primaryContainer}>
                     <Loading size={'large'} />
@@ -505,8 +541,8 @@ export default class PlaceOrder extends Component {
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", flex: 1 }}>
-                                {this.state.errors.defaultDate && <Text style={[errorText, { flex: 1 }]}>{this.state.errors.defaultDate}</Text>}
-                                {this.state.errors.defaultTime && <Text style={[errorText, { flex: 1, marginLeft: 15 }]}>{this.state.errors.defaultTime}</Text>}
+                                {(this.state.errors.defaultDate || this.state.errors.defaultTime) && <Text style={[errorText, { flex: 1 }]}>{this.state.errors.defaultDate}</Text>}
+                                {(this.state.errors.defaultTime || this.state.errors.defaultDate) && <Text style={[errorText, { flex: 1, marginLeft: 15 }]}>{this.state.errors.defaultTime}</Text>}
                             </View>
                             <View style={styles.secCont}>
                                 <View style={{ flexDirection: "row" }}>

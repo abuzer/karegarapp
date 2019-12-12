@@ -90,7 +90,22 @@ export default class Map extends Component {
     componentDidMount() {
         this.requestLocationPermission();
         // Instead of navigator.geolocation, just use Geolocation.
+        // this.watchID = Geolocation.watchPosition((position) => {
+        //     console.log("got postion")
 
+        //     this.setState({
+        //         lat: position.coords.latitude,
+        //         long: position.coords.longitude,
+        //         userLat: position.coords.latitude,
+        //         userLong: position.coords.longitude,
+        //         loading: false,
+
+        //     });
+        //     // Create the object to update this.state.mapRegion through the onRegionChange function
+
+
+        // }, (error) => console.log(error));
+        // return;
         Geolocation.getCurrentPosition(
             (position) => {
                 console.log(position.coords);
@@ -111,6 +126,9 @@ export default class Map extends Component {
         );
 
 
+    }
+    componentWillUnmount() {
+        Geolocation.clearWatch(this.watchID);
     }
     async requestLocationPermission() {
         const chckLocationPermission = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
